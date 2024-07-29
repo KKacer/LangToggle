@@ -1,0 +1,57 @@
+﻿@inherits LayoutComponentBase
+
+<body>
+        <header class="sectHead">
+            <LangBar OnLanguageChanged="@HandleLanguageChange" />
+        </header>
+        <div class="Main">
+            @Body
+        </div>
+        <footer></footer>    
+</body>
+
+<style>
+    body{
+        display: flex;
+        flex-direction: column;
+    }
+    .sectHead {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        background-color: #3f51b5;
+        height: 120px;
+        width: 100%;
+        margin: auto;
+        padding: 25px 0;
+        align-items: center;
+        align-content: center;
+
+    }
+
+    .main{
+        width: 100%;
+    }
+    footer {
+        background-color: #3f51b5;
+        height: 100px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+
+@code 
+{
+     private void HandleLanguageChange()
+     {
+         //NavigationManager.NavigateTo(NavigationManager.Uri, true);
+         StateHasChanged();
+     }
+
+     protected override void OnInitialized()
+     {
+         // Ensure initial UI update based on stored culture
+         StateHasChanged();
+     }    
+}

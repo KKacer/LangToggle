@@ -1,0 +1,36 @@
+﻿@page "/counterxx"
+@rendermode InteractiveServer
+
+@inject ProtectedSessionStorage Store
+@inject ProtectedLocalStorage LocStore
+@* @inject IComponentContext ComponentContext
+ *@
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int? currentCount;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var result = await Store.GetAsync<int>("count");
+        currentCount = result.Success ? result.Value : default(int?);
+
+    }
+
+
+    private async void IncrementCount()
+    {
+        if (currentCount == null)
+            currentCount = 0;
+        currentCount++;
+        await Store.SetAsync("count", currentCount);
+    }
+}

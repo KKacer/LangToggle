@@ -1,0 +1,51 @@
+﻿@page "/lang"
+
+@using System.Collections;
+@using System.Threading.Tasks;
+@rendermode InteractiveServer
+@inject ProtectedLocalStorage LocStore
+@inject IStringLocalizer<LangBar> Loc
+@inject CultureState CultureState
+
+<button @onclick="ToggleLanguage">
+    Change Language
+</button>
+
+<label>Current Language: @Language</label>
+
+@code {
+    private string? Language { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Language = CultureInfo.CurrentUICulture.Name;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await LocStore.GetAsync<string>("language");
+            if (result.Success)
+            {
+                Language = result.Value;
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(Language);
+                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(Language);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task ToggleLanguage()
+    {
+        Language = Language == "en-US" ? "fa-IR" : "en-US";
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(Language);
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(Language);
+        await LocStore.SetAsync("language", Language);
+        OnLanguageChanged.InvokeAsync();
+        CultureState.SetCulture(Language);
+    }
+
+    [Parameter]
+    public EventCallback OnLanguageChanged { get; set; }
+}

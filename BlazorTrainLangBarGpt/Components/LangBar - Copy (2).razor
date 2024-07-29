@@ -1,0 +1,92 @@
+﻿@page "/langX2"
+
+@using System.Collections;
+@using System.Threading.Tasks;
+@inject ProtectedSessionStorage Store
+@inject ProtectedLocalStorage LocStore
+@rendermode InteractiveServer
+
+<div class="langContainer">
+    <button class="btnTest" @onclick="ToggleLanguage">@buttonText</button>
+    <label class="p1selLang">@CurrentLanguage</label>
+</div>
+
+
+@code {
+
+    //public string SelectedOption { get; set; }
+    public string CurrentLanguage { get; set; }
+
+    private bool isConnected;
+    private bool isRendered;
+
+    //private string CurrentLanguage = "English";
+    private string buttonText = "Change Language";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize without JavaScript interop
+    }
+
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Debug.WriteLine("===vvv============");
+
+        if (!isConnected)
+        {
+            isConnected = true;
+
+            await base.OnAfterRenderAsync(firstRender);
+            //var result = await Store.GetAsync<string>("selLang");
+
+            if (firstRender)
+            {
+                var result = await LocStore.GetAsync<string>("selLang");
+                if (result.Success)
+                    CurrentLanguage = result.Value.ToString();
+                else
+                    CurrentLanguage = "English";
+                if (CurrentLanguage != "English")
+                    StateHasChanged();
+            }
+            else
+                await ToggleLanguage();
+            isConnected = false;
+        }
+        Debug.WriteLine($"== SelCountry : {0}", CurrentLanguage);
+        //Debug.WriteLine($"== SelCountry : {0}", SelCountry);
+
+        isRendered = true;
+    }
+
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         CurrentLanguage = await GetCurrentLanguageAsync();
+    //         StateHasChanged(); // Notify the UI to re-render with the updated language
+    //     }
+    // }
+
+    private async Task ToggleLanguage()
+    {
+        if (CurrentLanguage == "English")
+            CurrentLanguage = "Farsi";
+        else
+            CurrentLanguage = "English";
+
+        await SaveStore(CurrentLanguage);
+    }
+
+
+    public async Task SaveStore(string stInput)
+    {
+        //await Store.SetAsync("selLang", SelCountry);
+        await LocStore.SetAsync("selLang", stInput);
+        StateHasChanged();
+
+    }
+}

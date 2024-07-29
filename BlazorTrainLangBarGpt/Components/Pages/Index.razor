@@ -1,0 +1,22 @@
+﻿@page "/"
+@inject IStringLocalizer<Index> Loc
+@inject CultureState CultureState
+
+<h3>@Loc["stWelcome"]</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        CultureState.OnCultureChanged += HandleCultureChanged;
+    }
+
+    private void HandleCultureChanged()
+    {
+        StateHasChanged();
+    }
+
+    void Dispose()
+    {
+        CultureState.OnCultureChanged -= HandleCultureChanged;
+    }
+}

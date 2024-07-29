@@ -1,0 +1,47 @@
+﻿@page "/langbarjs"
+@inject IJSRuntime JS
+
+<button @onclick="ToggleLanguage">@buttonText</button>
+<label>@currentLanguage</label>
+
+@code {
+    private string currentLanguage = "en-us";
+    private string buttonText = "Change Language";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize without JavaScript interop
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            currentLanguage = await GetCurrentLanguageAsync();
+            StateHasChanged(); // Notify the UI to re-render with the updated language
+        }
+    }
+
+    private async Task ToggleLanguage()
+    {
+        if (currentLanguage == "en-us")
+        {
+            await SetCurrentLanguageAsync("fa-ir");
+        }
+        else
+        {
+            await SetCurrentLanguageAsync("en-us");
+        }
+        currentLanguage = await GetCurrentLanguageAsync();
+    }
+
+    private async Task<string> GetCurrentLanguageAsync()
+    {
+        return await JS.InvokeAsync<string>("localStorageHelper.getItem", "currentLanguage") ?? "en-us";
+    }
+
+    private async Task SetCurrentLanguageAsync(string language)
+    {
+        await JS.InvokeVoidAsync("localStorageHelper.setItem", "currentLanguage", language);
+    }
+}

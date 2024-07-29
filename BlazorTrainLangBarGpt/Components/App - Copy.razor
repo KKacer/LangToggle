@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
+    <script>
+        alert('here!');
+        window.localStorageHelper = {
+            getItem: function (key) {
+                return localStorage.getItem(key);
+            },
+            setItem: function (key, value) {
+                localStorage.setItem(key, value);
+            }
+        };
+    </script>
+</body>
+
+</html>

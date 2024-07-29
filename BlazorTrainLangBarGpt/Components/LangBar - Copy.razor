@@ -1,0 +1,37 @@
+﻿@inject IJSRuntime JS
+
+<button @onclick="ToggleLanguage">@buttonText</button>
+<label>@currentLanguage</label>
+
+@code {
+    private string currentLanguage = "en-us";
+    private string buttonText = "Change Language";
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentLanguage = await GetCurrentLanguageAsync();
+    }
+
+    private async Task ToggleLanguage()
+    {
+        if (currentLanguage == "en-us")
+        {
+            await SetCurrentLanguageAsync("fa-ir");
+        }
+        else
+        {
+            await SetCurrentLanguageAsync("en-us");
+        }
+        currentLanguage = await GetCurrentLanguageAsync();
+    }
+
+    private async Task<string> GetCurrentLanguageAsync()
+    {
+        return await JS.InvokeAsync<string>("localStorage.getItem", "currentLanguage") ?? "en-us";
+    }
+
+    private async Task SetCurrentLanguageAsync(string language)
+    {
+        await JS.InvokeVoidAsync("localStorage.setItem", "currentLanguage", language);
+    }
+}
